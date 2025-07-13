@@ -21,41 +21,20 @@ public class UserEntity extends AuditableEntity {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "username", nullable = false, unique = true)
-    private String username;
-
-    @Column(name = "hashed_password")
+    @Column(name = "password_hash")
     private String password;
-
-    @Column(name = "role")
-    @Enumerated(EnumType.STRING)
-    @JdbcType(PostgreSQLEnumJdbcType.class)
-    private Role role;
 
     @Column(name = "enabled")
     private boolean enabled;
 
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
-
     public UserEntity() {
     }
 
-    public UserEntity(String email, String username, String password, Role role, boolean enabled, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public UserEntity(String email, String password, boolean enabled, LocalDateTime createdAt) {
         this.email = email;
-        this.username = username;
         this.password = password;
-        this.role = role;
         this.enabled = enabled;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
-
-    public String getUsername() {
-        return username;
+        setCreatedAt(createdAt);
     }
 
     public String getEmail() {
@@ -66,16 +45,8 @@ public class UserEntity extends AuditableEntity {
         this.email = email;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
     }
 
     public void setEnabled(boolean enabled) {
@@ -84,11 +55,7 @@ public class UserEntity extends AuditableEntity {
 
     @Override
     public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+        super.setCreatedAt(createdAt);
     }
 
-    @Override
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
 }

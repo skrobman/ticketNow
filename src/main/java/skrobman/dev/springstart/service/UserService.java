@@ -35,7 +35,7 @@ public class UserService {
 
         UserEntity user = new UserEntity();
         user.setEmail(userDto.getEmail());
-        user.setUsername(userDto.getUsername());
+        //user.setUsername(userDto.getUsername());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         user.setEnabled(false);
 
