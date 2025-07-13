@@ -30,11 +30,10 @@ public class UserEntity extends AuditableEntity {
     public UserEntity() {
     }
 
-    public UserEntity(String email, String password, boolean enabled, LocalDateTime createdAt) {
+    public UserEntity(String email, String password, boolean enabled) {
         this.email = email;
         this.password = password;
         this.enabled = enabled;
-        setCreatedAt(createdAt);
     }
 
     public String getEmail() {
@@ -52,10 +51,4 @@ public class UserEntity extends AuditableEntity {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
-
-    @Override
-    public void setCreatedAt(LocalDateTime createdAt) {
-        super.setCreatedAt(createdAt);
-    }
-
 }
