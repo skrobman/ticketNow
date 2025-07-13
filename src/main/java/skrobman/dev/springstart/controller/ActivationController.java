@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import skrobman.dev.springstart.service.ActivationService;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/user/verify")
 public class ActivationController {
@@ -17,7 +19,7 @@ public class ActivationController {
     }
 
     @GetMapping
-    public ResponseEntity<String> verifyAccount(@RequestParam("token") String token) {
+    public ResponseEntity<Map<String, String>> verifyAccount(@RequestParam("token") String token) {
         return activationService.activateToken(token);
     }
 }

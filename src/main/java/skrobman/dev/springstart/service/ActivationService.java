@@ -8,6 +8,7 @@ import skrobman.dev.springstart.repository.TokenRepository;
 import skrobman.dev.springstart.repository.UserRepository;
 
 import java.time.OffsetDateTime;
+import java.util.Map;
 
 @Service
 public class ActivationService {
@@ -19,20 +20,20 @@ public class ActivationService {
         this.tokenRepository = tokenRepository;
     }
 
-    public ResponseEntity<String> activateToken(String token){
+    public ResponseEntity<Map<String, String>> activateToken(String token){
         TokenEntity verificationToken = tokenRepository.findByToken(token);
 
         if(verificationToken == null){
-            return ResponseEntity.badRequest().body("Invalid Token");
+            return ResponseEntity.badRequest().body(Map.of("message", "Invalid Token"));
         }
         if(verificationToken.getExpiryDate().isBefore(OffsetDateTime.now())){
-            return ResponseEntity.badRequest().body("Token expired");
+            return ResponseEntity.badRequest().body(Map.of("message", "Token expired"));
         }
 
         UserEntity user = verificationToken.getUser();
         user.setEnabled(true);
         userRepository.save(user);
 
-        return ResponseEntity.ok("Account verified");
+        return ResponseEntity.ok(Map.of("message", "Account verified"));
     }
 }
