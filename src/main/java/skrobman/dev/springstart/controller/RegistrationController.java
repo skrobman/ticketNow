@@ -1,5 +1,6 @@
 package skrobman.dev.springstart.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class RegistrationController {
     private UserService userService;
 
     @PostMapping
-    public ResponseEntity<Map<String, String>> register(@RequestBody UserDto userDto){
+    public ResponseEntity<Map<String, String>> register(@Valid @RequestBody UserDto userDto){
         try {
             userService.registerUser(userDto);
             return ResponseEntity
@@ -26,7 +27,11 @@ public class RegistrationController {
                             "message", "Registration Successful. Please, check your email to verify your email."
                     ));
         }catch (EmailAlreadyExist e){
-            throw e;
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body(Map.of(
+                            "error", "Email is already exist"
+                    ));
         }
 
     }

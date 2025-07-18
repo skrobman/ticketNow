@@ -1,9 +1,9 @@
 package skrobman.dev.springstart.common.annotation;
 
+import jakarta.validation.Constraint;
+import jakarta.validation.Payload;
 import skrobman.dev.springstart.common.validation.StrongPasswordValidator;
 
-import javax.validation.Constraint;
-import javax.validation.Payload;
 import java.lang.annotation.*;
 
 @Documented
