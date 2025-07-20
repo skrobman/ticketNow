@@ -1,13 +1,8 @@
 package skrobman.dev.springstart.entity;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.JdbcType;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.dialect.PostgreSQLEnumJdbcType;
-import skrobman.dev.springstart.common.enums.Role;
-
-import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.Setter;
 import java.util.UUID;
 
 @Entity
@@ -18,12 +13,16 @@ public class UserEntity extends AuditableEntity {
     @Column(name = "id")
     private UUID id;
 
+    @Setter
+    @Getter
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
+    @Setter
     @Column(name = "password_hash")
     private String password;
 
+    @Setter
     @Column(name = "enabled")
     private boolean enabled;
 
@@ -36,19 +35,4 @@ public class UserEntity extends AuditableEntity {
         this.enabled = enabled;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
 }
