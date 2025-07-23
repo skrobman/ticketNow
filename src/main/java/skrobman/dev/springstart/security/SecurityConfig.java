@@ -18,7 +18,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/user/register", "/user/verify").permitAll() // публичные эндпоинты
+                        .requestMatchers("/user/register", "/user/verify", "/user/register/resend-token").permitAll() // публичные эндпоинты
                         .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf.disable());

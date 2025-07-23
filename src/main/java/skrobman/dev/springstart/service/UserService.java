@@ -5,10 +5,14 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import skrobman.dev.springstart.dto.EmailDto;
 import skrobman.dev.springstart.dto.UserDto;
 import skrobman.dev.springstart.entity.TokenEntity;
 import skrobman.dev.springstart.entity.UserEntity;
+import skrobman.dev.springstart.exception.AlreadyActivated;
 import skrobman.dev.springstart.exception.EmailAlreadyExist;
+import skrobman.dev.springstart.exception.EmailDoesNotExist;
+import skrobman.dev.springstart.exception.TooManyRequestsException;
 import skrobman.dev.springstart.repository.TokenRepository;
 import skrobman.dev.springstart.repository.UserRepository;
 
@@ -25,6 +29,8 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private TokenRepository tokenRepository;
+    @Autowired
+    private EmailRateLimiterService emailRateLimiterService;
 
     public void registerUser(UserDto userDto){
         boolean userExists = userRepository.findByEmail(userDto.getEmail()) != null;
@@ -33,38 +39,66 @@ public class UserService {
             throw new EmailAlreadyExist("Account with email: " + userDto.getEmail() + "already exist");
         }
 
+        //User Registration Logic
         UserEntity user = new UserEntity();
         user.setEmail(userDto.getEmail());
-        //user.setUsername(userDto.getUsername());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         user.setEnabled(false);
 
         userRepository.save(user);
 
-        String token = UUID.randomUUID().toString();
-        OffsetDateTime expiryDate = OffsetDateTime.now().plusMinutes(5);
-
-        TokenEntity verificationToken = new TokenEntity();
-        verificationToken.setToken(token);
-        verificationToken.setExpiryDate(expiryDate);
-        verificationToken.setUser(user);
-        tokenRepository.save(verificationToken);
-
-        sendVerificationEmail(user.getEmail(), token);
+        //Token generation
+        TokenEntity token = createOrUpdateToken(user);
+        sendVerificationEmail(user.getEmail(), token.getToken());
     }
 
     private void sendVerificationEmail(String email, String token){
         String subject = "Email Verification";
         String conformationUrl = "http://localhost:8080/user/verify?token=" + token;
-        String message = "Please, click the link to activate your account " + conformationUrl;
+        String message = "Please, click the link to activate your account " + conformationUrl
+                + "\n Your token will be valid for the next 5 minutes. " +
+                "If your token has expired, you can resend email. " +
+                "\n Please, don't answer this email";
 
+        //Email Message Body
         SimpleMailMessage emailMessage = new SimpleMailMessage();
         emailMessage.setTo(email);
         emailMessage.setSubject(subject);
         emailMessage.setText(message);
-        mailSender.send(emailMessage);
 
+        mailSender.send(emailMessage);
     }
 
+    public void resendVerificationEmail(EmailDto emailDto) throws EmailDoesNotExist, TooManyRequestsException {
+        UserEntity user = userRepository.findByEmail(emailDto.getEmail());
 
+        if(user == null){
+            throw new EmailDoesNotExist("Account with email: " + emailDto.getEmail() + "does not exist");
+        }
+
+        if (!emailRateLimiterService.canSendEmail(user.getEmail())) {
+            throw new TooManyRequestsException("You have exceeded the email sending limit. Please try again later.");
+        }
+
+        if(user.isEnabled()){
+            throw new AlreadyActivated("You have an activated account for email: " + user.getEmail());
+        }
+
+        TokenEntity token = createOrUpdateToken(user);
+        sendVerificationEmail(user.getEmail(), token.getToken());
+    }
+
+    //TODO: fix this null shit
+    private TokenEntity createOrUpdateToken(UserEntity user){
+        TokenEntity token = tokenRepository.findByUser(user);
+        String newToken = UUID.randomUUID().toString();
+        OffsetDateTime expiry = OffsetDateTime.now().plusMinutes(5);
+        if (token == null) {
+            token = new TokenEntity();
+            token.setUser(user);
+        }
+        token.setToken(newToken);
+        token.setExpiryDate(expiry);
+        return tokenRepository.save(token);
+    }
 }

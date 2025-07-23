@@ -23,6 +23,7 @@ public class UserEntity extends AuditableEntity {
     private String password;
 
     @Setter
+    @Getter
     @Column(name = "enabled")
     private boolean enabled;
 

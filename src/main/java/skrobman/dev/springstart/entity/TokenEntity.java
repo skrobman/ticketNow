@@ -1,6 +1,8 @@
 package skrobman.dev.springstart.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.OffsetDateTime;
 
@@ -12,12 +14,18 @@ public class TokenEntity {
     @Column(name = "id")
     private Long id;
 
+    @Setter
+    @Getter
     @Column(name = "token")
     private String token;
 
+    @Setter
+    @Getter
     @Column(name = "expiry_date")
     private OffsetDateTime expiryDate;
 
+    @Getter
+    @Setter
     @OneToOne
     @JoinColumn(nullable = false, name = "user_id")
     private UserEntity user;
@@ -30,27 +38,4 @@ public class TokenEntity {
         this.expiryDate = expiryDate;
     }
 
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public OffsetDateTime getExpiryDate() {
-        return expiryDate;
-    }
-
-    public void setExpiryDate(OffsetDateTime expiryDate) {
-        this.expiryDate = expiryDate;
-    }
-
-    public UserEntity getUser() {
-        return user;
-    }
-
-    public void setUser(UserEntity user) {
-        this.user = user;
-    }
 }
