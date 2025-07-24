@@ -21,16 +21,25 @@ import java.util.UUID;
 
 @Service
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private JavaMailSender mailSender;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private TokenRepository tokenRepository;
-    @Autowired
-    private EmailRateLimiterService emailRateLimiterService;
+    private final UserRepository userRepository;
+    private final JavaMailSender mailSender;
+    private final PasswordEncoder passwordEncoder;
+    private final TokenRepository tokenRepository;
+    private final EmailRateLimiterService emailRateLimiterService;
+
+    public UserService(
+            UserRepository userRepository,
+            JavaMailSender mailSender,
+            PasswordEncoder passwordEncoder,
+            TokenRepository tokenRepository,
+            EmailRateLimiterService emailRateLimiterService
+    ) {
+        this.userRepository = userRepository;
+        this.mailSender = mailSender;
+        this.passwordEncoder = passwordEncoder;
+        this.tokenRepository = tokenRepository;
+        this.emailRateLimiterService = emailRateLimiterService;
+    }
 
     public void registerUser(UserDto userDto){
         boolean userExists = userRepository.findByEmail(userDto.getEmail()) != null;
@@ -88,7 +97,6 @@ public class UserService {
         sendVerificationEmail(user.getEmail(), token.getToken());
     }
 
-    //TODO: fix this null shit
     private TokenEntity createOrUpdateToken(UserEntity user){
         TokenEntity token = tokenRepository.findByUser(user);
         String newToken = UUID.randomUUID().toString();
