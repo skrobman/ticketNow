@@ -19,6 +19,7 @@ public class UserEntity extends AuditableEntity {
     private String email;
 
     @Setter
+    @Getter
     @Column(name = "password_hash")
     private String password;
 
