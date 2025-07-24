@@ -3,7 +3,7 @@ package skrobman.dev.springstart.config;
 import io.github.cdimascio.dotenv.Dotenv;
 
 public class APIConfig {
-    public static void LoadEnv(){
+    public static void LoadEnv() {
         Dotenv dotenv = Dotenv.configure().load();
 
         //Postgres Configuration
@@ -15,20 +15,27 @@ public class APIConfig {
         String emailName = dotenv.get("EMAIL_NAME");
         String emailPassword = dotenv.get("EMAIL_PASSWORD");
 
-        if(springDataSourceUrl == null){
+        //Oauth2 Google loading credentials
+        String googleClientId = dotenv.get("GOOGLE_CLIENT_ID");
+        String googleClientSecret = dotenv.get("GOOGLE_CLIENT_SECRET");
+
+        if (springDataSourceUrl == null) {
             throw new IllegalStateException("Data Source URL cannot be null");
         }
-        if(postgresUser == null){
+        if (postgresUser == null) {
             throw new IllegalStateException("Database User cannot be null");
         }
-        if(postgresPassword == null){
+        if (postgresPassword == null) {
             throw new IllegalStateException("Password cannot be null");
         }
-        if(emailName == null){
+        if (emailName == null) {
             throw new IllegalStateException("Email required");
         }
-        if(emailPassword == null){
+        if (emailPassword == null) {
             throw new IllegalStateException("Password required");
+        }
+        if (googleClientId == null || googleClientSecret == null) {
+            throw new IllegalStateException("Google Client ID and Client Secret required!");
         }
 
         System.setProperty("SPRING_DATASOURCE_URL", springDataSourceUrl);
@@ -36,5 +43,7 @@ public class APIConfig {
         System.setProperty("POSTGRES_PASSWORD", postgresPassword);
         System.setProperty("EMAIL_NAME", emailName);
         System.setProperty("EMAIL_PASSWORD", emailPassword);
+        System.setProperty("GOOGLE_CLIENT_ID", googleClientId);
+        System.setProperty("GOOGLE_CLIENT_SECRET", googleClientSecret);
     }
 }
