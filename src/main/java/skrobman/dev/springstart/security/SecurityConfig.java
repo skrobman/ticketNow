@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.configurers.LogoutConf
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import skrobman.dev.springstart.service.CustomUserDetailsService;
 
 @Configuration
@@ -25,7 +26,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationFailureHandler authenticationFailureHandler) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/user/register", "/user/verify", "/user/register/resend-token").permitAll()
@@ -35,6 +36,7 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .usernameParameter("email")
                         .defaultSuccessUrl("/home", true)
+                        .failureHandler(authenticationFailureHandler)
                         .permitAll()
                 )
                 .logout(LogoutConfigurer::permitAll
@@ -43,4 +45,5 @@ public class SecurityConfig {
                 .userDetailsService(customUserDetailsService);
         return http.build();
     }
+
 }
