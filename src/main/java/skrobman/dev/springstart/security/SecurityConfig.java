@@ -39,7 +39,9 @@ public class SecurityConfig {
                         .failureHandler(authenticationFailureHandler)
                         .permitAll()
                 )
-                .logout(LogoutConfigurer::permitAll
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout")
                 )
                 .csrf(csrf -> csrf.disable())
                 .userDetailsService(customUserDetailsService);
