@@ -1,19 +1,15 @@
 package skrobman.dev.springstart.controller;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+import java.util.Map;
+
+@Controller
 public class HomeController {
-
-    @GetMapping("/")
-    public String home() {
-        return "Welcome to TicketNow!";
-    }
-
-    @GetMapping("/loggedIn")
-    public String loggedIn() {
-        return "You are logged in!";
+    @GetMapping("/home")
+    public ResponseEntity<Map<String, String>> home(){
+        return ResponseEntity.ok(Map.of("message: ", "Welcome to home page!"));
     }
 }
