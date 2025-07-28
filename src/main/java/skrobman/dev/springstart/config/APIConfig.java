@@ -15,6 +15,9 @@ public class APIConfig {
         String emailName = dotenv.get("EMAIL_NAME");
         String emailPassword = dotenv.get("EMAIL_PASSWORD");
 
+        //JWT Token
+        String JWT_SECRET = dotenv.get("JWT_SECRET");
+
         if(springDataSourceUrl == null){
             throw new IllegalStateException("Data Source URL cannot be null");
         }
@@ -30,11 +33,15 @@ public class APIConfig {
         if(emailPassword == null){
             throw new IllegalStateException("Password required");
         }
+        if(JWT_SECRET == null){
+            throw new IllegalStateException("JWT Secret required");
+        }
 
         System.setProperty("SPRING_DATASOURCE_URL", springDataSourceUrl);
         System.setProperty("POSTGRES_USER", postgresUser);
         System.setProperty("POSTGRES_PASSWORD", postgresPassword);
         System.setProperty("EMAIL_NAME", emailName);
         System.setProperty("EMAIL_PASSWORD", emailPassword);
+        System.setProperty("JWT_SECRET", JWT_SECRET);
     }
 }

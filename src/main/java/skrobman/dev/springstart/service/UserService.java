@@ -1,5 +1,6 @@
 package skrobman.dev.springstart.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -20,6 +21,7 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final JavaMailSender mailSender;
@@ -27,19 +29,6 @@ public class UserService {
     private final TokenRepository tokenRepository;
     private final EmailRateLimiterService emailRateLimiterService;
 
-    public UserService(
-            UserRepository userRepository,
-            JavaMailSender mailSender,
-            PasswordEncoder passwordEncoder,
-            TokenRepository tokenRepository,
-            EmailRateLimiterService emailRateLimiterService
-    ) {
-        this.userRepository = userRepository;
-        this.mailSender = mailSender;
-        this.passwordEncoder = passwordEncoder;
-        this.tokenRepository = tokenRepository;
-        this.emailRateLimiterService = emailRateLimiterService;
-    }
 
     public void registerUser(UserDto userDto){
         boolean userExists = userRepository.findByEmail(userDto.getEmail()) != null;

@@ -1,24 +1,35 @@
 package skrobman.dev.springstart.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import skrobman.dev.springstart.dto.JWTAuthentificationTokenDto;
+import skrobman.dev.springstart.dto.UserDto;
+import skrobman.dev.springstart.security.jwt.JWTService;
 
-@Controller
+@RestController
+@RequiredArgsConstructor
 public class LoginController {
-    @GetMapping("/login")
-    public String loginPage(HttpServletRequest request, Model model){
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            String errorMsg = (String) session.getAttribute("loginErrorMsg");
-            if (errorMsg != null) {
-                model.addAttribute("loginError", errorMsg);
-                session.removeAttribute("loginErrorMsg");
-            }
-        }
+    private final AuthenticationManager authenticationManager;
+    private final JWTService jwtService;
 
-        return "login";
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody UserDto userCredentials){
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        userCredentials.getEmail(),
+                        userCredentials.getPassword()
+                )
+        );
+
+        JWTAuthentificationTokenDto jwtTokens = jwtService.generateAuthToken(userCredentials.getEmail());
+
+        return ResponseEntity.ok(jwtTokens);
     }
 }
