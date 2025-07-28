@@ -19,6 +19,10 @@ public class APIConfig {
         String googleClientId = dotenv.get("GOOGLE_CLIENT_ID");
         String googleClientSecret = dotenv.get("GOOGLE_CLIENT_SECRET");
 
+        //Oauth2 GitHub loading credentials
+        String githubClientId = dotenv.get("GITHUB_CLIENT_ID");
+        String githubClientSecret = dotenv.get("GITHUB_CLIENT_SECRET");
+
         if (springDataSourceUrl == null) {
             throw new IllegalStateException("Data Source URL cannot be null");
         }
@@ -37,6 +41,9 @@ public class APIConfig {
         if (googleClientId == null || googleClientSecret == null) {
             throw new IllegalStateException("Google Client ID and Client Secret required!");
         }
+        if (githubClientId == null || githubClientSecret == null) {
+            throw new IllegalStateException("Github Client ID and Client Secret required!");
+        }
 
         System.setProperty("SPRING_DATASOURCE_URL", springDataSourceUrl);
         System.setProperty("POSTGRES_USER", postgresUser);
@@ -45,5 +52,7 @@ public class APIConfig {
         System.setProperty("EMAIL_PASSWORD", emailPassword);
         System.setProperty("GOOGLE_CLIENT_ID", googleClientId);
         System.setProperty("GOOGLE_CLIENT_SECRET", googleClientSecret);
+        System.setProperty("GITHUB_CLIENT_ID", githubClientId);
+        System.setProperty("GITHUB_CLIENT_SECRET", githubClientSecret);
     }
 }
