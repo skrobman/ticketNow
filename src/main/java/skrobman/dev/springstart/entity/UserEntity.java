@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "users")
-public class UserEntity extends AuditableEntity {
+public class UserEntity extends AuditableEntity implements User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")
