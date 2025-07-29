@@ -3,7 +3,7 @@ package skrobman.dev.springstart.security.jwt;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import skrobman.dev.springstart.dto.JWTAuthentificationTokenDto;
@@ -12,12 +12,9 @@ import javax.crypto.SecretKey;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.logging.LogManager;
-
+@Log4j2
 @Component
 public class JWTService {
-    private static final Logger LOGGER = (Logger) LogManager.getLogManager().getLogger(String.valueOf(JWTService.class));
-
     @Value("${security.jwt.secret_key}")
     private final String JWT_SECRET;
 
@@ -79,15 +76,15 @@ public class JWTService {
                     .getPayload();
             return true;
         } catch (ExpiredJwtException e) {
-            LOGGER.error("Expired JWTException", e);
+            log.error("Expired JWTException", e);
         } catch (UnsupportedJwtException e){
-            LOGGER.error("Unsupported JWTException", e);
+            log.error("Unsupported JWTException", e);
         } catch (MalformedJwtException e){
-            LOGGER.error("MalformedJwtException", e);
+            log.error("MalformedJwtException", e);
         } catch (SecurityException e){
-            LOGGER.error("Security exception", e);
+            log.error("Security exception", e);
         }catch (Exception e){
-            LOGGER.error("Exception", e);
+            log.error("Exception", e);
         }
         return false;
     }
