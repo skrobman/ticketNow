@@ -30,13 +30,8 @@ public class JwtFilter extends OncePerRequestFilter {
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
         String token = getTokenFromRequest(request);
 
-        System.out.println("Token detected: " + token);
-
         if (token != null && jwtService.validateJWTToken(token)) {
-            System.out.println("Token valid, authenticating user");
             setCustomUserDetailsToSecurityContextHolder(token);
-        } else {
-            System.out.println("Token invalid or expired");
         }
         filterChain.doFilter(request, response);
 

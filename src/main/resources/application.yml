@@ -29,6 +29,14 @@ security:
   jwt:
     secret_key: ${JWT_SECRET}
 
+server:
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        secure: true
+        same-site: Strict
+
 logging:
   level:
     org:
