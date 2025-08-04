@@ -46,7 +46,7 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .userInfoEndpoint(endPoint -> endPoint.userService(oAuth2UserService))
                         // TODO: change defaultSuccessUrl bcs root is used for debugging!!!!!!!!!!!!!!!!!!!!!!!!!!
-                        .defaultSuccessUrl("/home", true)
+                        .defaultSuccessUrl("/", true)
                         .permitAll()
                 )
                 .logout(LogoutConfigurer::permitAll

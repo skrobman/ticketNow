@@ -1,11 +1,12 @@
 package skrobman.dev.springstart.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import skrobman.dev.springstart.entity.Oauth2UserEntity;
+import skrobman.dev.springstart.entity.UserEntity;
+import skrobman.dev.springstart.exception.EmailAlreadyExist;
 import skrobman.dev.springstart.exception.NoEmailProvidedException;
 import skrobman.dev.springstart.exception.NoNameProvidedException;
 import skrobman.dev.springstart.exception.NoRequiredParameterException;
@@ -15,15 +16,18 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import skrobman.dev.springstart.repository.UserRepository;
 
 @Service
 //@RequiredArgsConstructor
 public class Oauth2RegistrationService extends DefaultOAuth2UserService {
 
-    private final Oauth2UserRepository userRepository;
+    private final Oauth2UserRepository oauth2UserRepository;
+    private final UserRepository userRepository;
 
-    public Oauth2RegistrationService(Oauth2UserRepository userRepository) {
+    public Oauth2RegistrationService(Oauth2UserRepository oauth2UserRepository, UserRepository userRepository) {
         logger.error("Oauth2RegistrationService constructor HAS BEEN called.");
+        this.oauth2UserRepository = oauth2UserRepository;
         this.userRepository = userRepository;
     }
 
@@ -41,17 +45,21 @@ public class Oauth2RegistrationService extends DefaultOAuth2UserService {
     }
 
     private OAuth2User processUser(OAuth2User oAuth2User, OAuth2UserRequest request) {
-        Oauth2UserEntity user = userRepository.findByEmail(oAuth2User.getAttribute("email"));
+        // TODO: Rename this local variable!
+        Oauth2UserEntity oauth2User = oauth2UserRepository.findByEmail(oAuth2User.getAttribute("email"));
+        UserEntity defaultUser = userRepository.findByEmail(oAuth2User.getAttribute("email"));
 
-        if(user == null){
+        if(oauth2User == null && defaultUser == null){
             try {
-                user = registerUser(oAuth2User, request);
+                oauth2User = registerUser(oAuth2User, request);
             } catch (NoRequiredParameterException e) {
                 throw new RuntimeException(e);
             }
         }
-        else {
-            updateUser(oAuth2User, user);
+        else if (oauth2User != null && defaultUser == null){
+            updateUser(oAuth2User, oauth2User);
+        } else {
+            throw new EmailAlreadyExist("This user already exists. Provide login and password!");
         }
 
         return oAuth2User;
@@ -74,11 +82,11 @@ public class Oauth2RegistrationService extends DefaultOAuth2UserService {
         user.setEmail(email.toString());
         //user.setPassword(attributes.get("password").toString());
 
-        return userRepository.save(user);
+        return oauth2UserRepository.save(user);
     }
 
     private void updateUser(OAuth2User oAuth2User, Oauth2UserEntity user) {
         user.setEmail(oAuth2User.getAttribute("email"));
-        userRepository.save(user);
+        oauth2UserRepository.save(user);
     }
 }
