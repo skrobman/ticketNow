@@ -28,7 +28,7 @@ public class AuthController {
     public ResponseEntity<?> login(
             @RequestBody UserDto userCredentials,
             HttpServletResponse response
-    ){
+    ) {
         try {
             JWTAuthentificationTokenDto jwtTokens = userService.login(userCredentials);
             ResponseCookie refreshCookie = ResponseCookie.from("refreshTokens", jwtTokens.getRefreshToken())
@@ -57,7 +57,7 @@ public class AuthController {
     public ResponseEntity<?> logout(
             HttpServletRequest request,
             HttpServletResponse response
-    ){
+    ) {
         ResponseCookie deleteCookie = ResponseCookie.from("refreshTokens", "")
                 .path("/auth/refresh")
                 .httpOnly(true)

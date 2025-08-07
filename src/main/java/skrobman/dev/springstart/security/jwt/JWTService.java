@@ -12,6 +12,7 @@ import javax.crypto.SecretKey;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+
 @Log4j2
 @Component
 public class JWTService {
@@ -23,21 +24,21 @@ public class JWTService {
     }
 
 
-    public JWTAuthentificationTokenDto generateAuthToken(String email){
+    public JWTAuthentificationTokenDto generateAuthToken(String email) {
         JWTAuthentificationTokenDto jwtDto = new JWTAuthentificationTokenDto();
         jwtDto.setToken(generateJWTToken(email));
         jwtDto.setRefreshToken(generateRefreshToken(email));
         return jwtDto;
     }
 
-    public JWTAuthentificationTokenDto refreshBaseToken(String email, String refreshToken){
+    public JWTAuthentificationTokenDto refreshBaseToken(String email, String refreshToken) {
         JWTAuthentificationTokenDto jwtDto = new JWTAuthentificationTokenDto();
         jwtDto.setToken(generateJWTToken(email));
         jwtDto.setRefreshToken(refreshToken);
         return jwtDto;
     }
 
-    public String getEmailFromToken(String token){
+    public String getEmailFromToken(String token) {
         Claims claims = Jwts.parser()
                 .verifyWith(getSignInKey())
                 .build()
@@ -47,7 +48,7 @@ public class JWTService {
         return claims.getSubject();
     }
 
-    public String generateJWTToken(String email){
+    public String generateJWTToken(String email) {
         Date date = Date.from(LocalDateTime.now().plusMinutes(15).atZone(ZoneId.systemDefault()).toInstant());
 
         return Jwts.builder()
@@ -57,7 +58,7 @@ public class JWTService {
                 .compact();
     }
 
-    public String generateRefreshToken(String email){
+    public String generateRefreshToken(String email) {
         Date date = Date.from(LocalDateTime.now().plusDays(7).atZone(ZoneId.systemDefault()).toInstant());
 
         return Jwts.builder()
@@ -67,7 +68,7 @@ public class JWTService {
                 .compact();
     }
 
-    public boolean validateJWTToken(String token){
+    public boolean validateJWTToken(String token) {
         try {
             Jwts.parser()
                     .verifyWith(getSignInKey())
@@ -77,19 +78,19 @@ public class JWTService {
             return true;
         } catch (ExpiredJwtException e) {
             log.error("Expired JWTException", e);
-        } catch (UnsupportedJwtException e){
+        } catch (UnsupportedJwtException e) {
             log.error("Unsupported JWTException", e);
-        } catch (MalformedJwtException e){
+        } catch (MalformedJwtException e) {
             log.error("MalformedJwtException", e);
-        } catch (SecurityException e){
+        } catch (SecurityException e) {
             log.error("Security exception", e);
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error("Exception", e);
         }
         return false;
     }
 
-    private SecretKey getSignInKey(){
+    private SecretKey getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(JWT_SECRET);
         return Keys.hmacShaKeyFor(keyBytes);
     }

@@ -19,5 +19,6 @@ public @interface StrongPassword {
             "and must have 12 characters minimum.";
 
     Class<?>[] groups() default {};
+
     Class<? extends Payload>[] payload() default {};
 }

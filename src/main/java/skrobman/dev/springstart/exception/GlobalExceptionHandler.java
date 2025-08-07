@@ -11,9 +11,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
-public class GlobalExceptionHandler{
+public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex){
+    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()

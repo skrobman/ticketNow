@@ -25,7 +25,7 @@ public class APIConfig {
 
         String JWT_SECRET = dotenv.get("JWT_SECRET");
 
-        if(springDataSourceUrl == null) {
+        if (springDataSourceUrl == null) {
             throw new IllegalStateException("Data Source URL cannot be null");
         }
         if (postgresUser == null) {
@@ -40,7 +40,7 @@ public class APIConfig {
         if (emailPassword == null) {
             throw new IllegalStateException("Password required");
         }
-        if(JWT_SECRET == null){
+        if (JWT_SECRET == null) {
             throw new IllegalStateException("JWT Secret required");
         }
         if (googleClientId == null || googleClientSecret == null) {

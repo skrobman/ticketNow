@@ -24,12 +24,12 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         UserEntity user = userRepository.findByEmail(email);
 
-        if(user == null){
+        if (user == null) {
             throw new UsernameNotFoundException("User with email: " + email + " is not found");
         }
 
         //Activation Check
-        if (!user.isEnabled()){
+        if (!user.isEnabled()) {
             throw new DisabledException("Account is not activated!");
         }
 

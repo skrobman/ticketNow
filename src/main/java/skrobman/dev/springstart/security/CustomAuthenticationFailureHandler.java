@@ -34,7 +34,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
 
         if (
                 exception.getCause() instanceof DisabledException
-                || exception instanceof DisabledException
+                        || exception instanceof DisabledException
         ) {
             errorMessage = "Your account is not activated. Please activate your account via the link sent to your email.";
             errorCode = "ACCOUNT_NOT_ACTIVATED";

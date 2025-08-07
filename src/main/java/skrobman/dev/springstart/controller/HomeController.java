@@ -10,18 +10,18 @@ import java.util.Map;
 @RestController
 public class HomeController {
     @GetMapping("/home")
-    public ResponseEntity<Map<String, String>> home(){
+    public ResponseEntity<Map<String, String>> home() {
         return ResponseEntity.ok(Map.of("message: ", "Welcome to home page via login+password!"));
     }
 
     @GetMapping("/")
-    public ResponseEntity<Map<String, String>> index(){
+    public ResponseEntity<Map<String, String>> index() {
         return ResponseEntity.ok(Map.of("message: ", "Welcome to home page via oauth2!"));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin")
-    public ResponseEntity<Map<String, String>> adminHome(){
+    public ResponseEntity<Map<String, String>> adminHome() {
         return ResponseEntity.ok(Map.of("message: ", "Welcome to home page admin!"));
     }
 }
