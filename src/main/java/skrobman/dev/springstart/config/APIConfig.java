@@ -24,6 +24,10 @@ public class APIConfig {
         String githubClientSecret = dotenv.get("GITHUB_CLIENT_SECRET");
 
         if (springDataSourceUrl == null) {
+        //JWT Token
+        String JWT_SECRET = dotenv.get("JWT_SECRET");
+
+        if(springDataSourceUrl == null){
             throw new IllegalStateException("Data Source URL cannot be null");
         }
         if (postgresUser == null) {
@@ -38,6 +42,9 @@ public class APIConfig {
         if (emailPassword == null) {
             throw new IllegalStateException("Password required");
         }
+        if(JWT_SECRET == null){
+            throw new IllegalStateException("JWT Secret required");
+        }
         if (googleClientId == null || googleClientSecret == null) {
             throw new IllegalStateException("Google Client ID and Client Secret required!");
         }
@@ -50,6 +57,7 @@ public class APIConfig {
         System.setProperty("POSTGRES_PASSWORD", postgresPassword);
         System.setProperty("EMAIL_NAME", emailName);
         System.setProperty("EMAIL_PASSWORD", emailPassword);
+        System.setProperty("JWT_SECRET", JWT_SECRET);
         System.setProperty("GOOGLE_CLIENT_ID", googleClientId);
         System.setProperty("GOOGLE_CLIENT_SECRET", googleClientSecret);
         System.setProperty("GITHUB_CLIENT_ID", githubClientId);

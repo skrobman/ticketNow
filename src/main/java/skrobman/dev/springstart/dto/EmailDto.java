@@ -5,8 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-@NotBlank(message = "Email cannot be empty")
-@Email(message = "Incorrect email")
 public class EmailDto {
+    @NotBlank(message = "Email cannot be empty")
+    @Email(message = "Incorrect email")
     private String email;
 }

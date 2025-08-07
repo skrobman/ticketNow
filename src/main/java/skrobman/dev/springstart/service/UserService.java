@@ -1,10 +1,14 @@
 package skrobman.dev.springstart.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import skrobman.dev.springstart.dto.EmailDto;
+import skrobman.dev.springstart.dto.JWTAuthentificationTokenDto;
 import skrobman.dev.springstart.dto.UserDto;
 import skrobman.dev.springstart.entity.TokenEntity;
 import skrobman.dev.springstart.entity.UserEntity;
@@ -14,31 +18,22 @@ import skrobman.dev.springstart.exception.EmailDoesNotExist;
 import skrobman.dev.springstart.exception.TooManyRequestsException;
 import skrobman.dev.springstart.repository.TokenRepository;
 import skrobman.dev.springstart.repository.UserRepository;
+import skrobman.dev.springstart.security.jwt.JWTService;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final JavaMailSender mailSender;
     private final PasswordEncoder passwordEncoder;
     private final TokenRepository tokenRepository;
     private final EmailRateLimiterService emailRateLimiterService;
+    private final AuthenticationManager authenticationManager;
+    private final JWTService jwtService;
 
-    public UserService(
-            UserRepository userRepository,
-            JavaMailSender mailSender,
-            PasswordEncoder passwordEncoder,
-            TokenRepository tokenRepository,
-            EmailRateLimiterService emailRateLimiterService
-    ) {
-        this.userRepository = userRepository;
-        this.mailSender = mailSender;
-        this.passwordEncoder = passwordEncoder;
-        this.tokenRepository = tokenRepository;
-        this.emailRateLimiterService = emailRateLimiterService;
-    }
 
     public void registerUser(UserDto userDto){
         boolean userExists = userRepository.findByEmail(userDto.getEmail()) != null;
@@ -107,5 +102,16 @@ public class UserService {
         token.setToken(newToken);
         token.setExpiryDate(expiry);
         return tokenRepository.save(token);
+    }
+
+    public JWTAuthentificationTokenDto login(UserDto userCredentials) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        userCredentials.getEmail(),
+                        userCredentials.getPassword()
+                )
+        );
+
+        return jwtService.generateAuthToken(userCredentials.getEmail());
     }
 }

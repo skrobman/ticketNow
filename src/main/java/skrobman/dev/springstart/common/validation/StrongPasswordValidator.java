@@ -12,4 +12,5 @@ public class StrongPasswordValidator implements ConstraintValidator<StrongPasswo
         if(value == null) return false;
         return value.matches(Password_PATTERN);
     }
+
 }
