@@ -23,11 +23,9 @@ public class APIConfig {
         String githubClientId = dotenv.get("GITHUB_CLIENT_ID");
         String githubClientSecret = dotenv.get("GITHUB_CLIENT_SECRET");
 
-        if (springDataSourceUrl == null) {
-        //JWT Token
         String JWT_SECRET = dotenv.get("JWT_SECRET");
 
-        if(springDataSourceUrl == null){
+        if(springDataSourceUrl == null) {
             throw new IllegalStateException("Data Source URL cannot be null");
         }
         if (postgresUser == null) {
