@@ -20,10 +20,6 @@ public class SecurityConfig {
 
     private final Oauth2RegistrationService oAuth2UserService;
 
-//    public SecurityConfig(CustomUserDetailsService customUserDetailsService) {
-//        this.customUserDetailsService = customUserDetailsService;
-//    }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -44,7 +40,7 @@ public class SecurityConfig {
                 )
                 .oauth2Login(form -> form
                         .loginPage("/login")
-                        .userInfoEndpoint(endPoint -> endPoint.userService(oAuth2UserService))
+                        .userInfoEndpoint(endPoint -> endPoint.oidcUserService(oAuth2UserService))
                         // TODO: change defaultSuccessUrl bcs root is used for debugging!!!!!!!!!!!!!!!!!!!!!!!!!!
                         .defaultSuccessUrl("/", true)
                         .permitAll()

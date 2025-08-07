@@ -32,11 +32,11 @@ spring:
           google:
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_CLIENT_SECRET}
-            scope: profile,email
+            scope: profile, email, openid
           github:
             client-id: ${GITHUB_CLIENT_ID}
             client-secret: ${GITHUB_CLIENT_SECRET}
-            scope: user:email
+            scope: user:email, openid
         provider:
           google:
             authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
