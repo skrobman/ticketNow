@@ -23,12 +23,13 @@ import java.util.Map;
 
 /**
  * Authorizes users that log in via oAuth2 with OpenID Connect
- */
+ * */
 @Service
 public class Oauth2RegistrationService extends OidcUserService {
-    private static final Logger logger = LoggerFactory.getLogger(Oauth2RegistrationService.class);
     private final Oauth2UserRepository oauth2UserRepository;
     private final UserRepository userRepository;
+
+    private static final Logger logger = LoggerFactory.getLogger(Oauth2RegistrationService.class);
 
     public Oauth2RegistrationService(Oauth2UserRepository oauth2UserRepository, UserRepository userRepository) {
         logger.error("Oauth2OidcRegistrationService [OpenID Connect] constructor HAS BEEN called.");
@@ -52,13 +53,14 @@ public class Oauth2RegistrationService extends OidcUserService {
         Oauth2UserEntity user = oauth2UserRepository.findByEmail(oAuth2User.getAttribute("email"));
         UserEntity defaultUser = userRepository.findByEmail(oAuth2User.getAttribute("email"));
 
-        if (user == null && defaultUser == null) {
+        if(user == null && defaultUser == null){
             try {
                 user = registerUser(oAuth2User, request);
             } catch (NoRequiredParameterException e) {
                 throw new RuntimeException(e);
             }
-        } else if (user != null && defaultUser == null) {
+        }
+        else if (user != null && defaultUser == null){
             updateUser(oAuth2User, user);
         } else {
             throw new EmailAlreadyExist("This user already exists. Provide login and password!");

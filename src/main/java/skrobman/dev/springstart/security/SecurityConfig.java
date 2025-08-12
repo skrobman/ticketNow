@@ -3,27 +3,20 @@ package skrobman.dev.springstart.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import skrobman.dev.springstart.service.Oauth2RegistrationService;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import skrobman.dev.springstart.security.jwt.JwtFilter;
+import skrobman.dev.springstart.service.CustomUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-@EnableMethodSecurity
 public class SecurityConfig {
     private final CustomUserDetailsService customUserDetailsService;
-    private final JwtFilter jwtFilter;
 
     private final Oauth2RegistrationService oAuth2UserService;
 
@@ -33,17 +26,10 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationFailureHandler authenticationFailureHandler) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/user/register",
-                                "/user/verify",
-                                "/user/register/resend-token",
-                                "/login",
-                                "/logout",
-                                "/auth/refresh"
-                        ).permitAll()
+                        .requestMatchers("/user/register", "/user/verify", "/user/register/resend-token").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -59,16 +45,10 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/", true)
                         .permitAll()
                 )
-                .logout(AbstractHttpConfigurer::disable)
-                .csrf(csrf -> csrf.disable())
-                .userDetailsService(customUserDetailsService)
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                .logout(LogoutConfigurer::permitAll
+                )
+                //.csrf(csrf -> csrf.disable())
+                .userDetailsService(customUserDetailsService);
         return http.build();
     }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-        return configuration.getAuthenticationManager();
-    }
-
 }
