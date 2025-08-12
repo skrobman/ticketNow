@@ -20,13 +20,13 @@ public class ActivationService {
         this.tokenRepository = tokenRepository;
     }
 
-    public ResponseEntity<Map<String, String>> activateToken(String token){
+    public ResponseEntity<Map<String, String>> activateToken(String token) {
         TokenEntity verificationToken = tokenRepository.findByToken(token);
 
-        if(verificationToken == null){
+        if (verificationToken == null) {
             return ResponseEntity.badRequest().body(Map.of("message", "Invalid Token"));
         }
-        if(verificationToken.getExpiryDate().isBefore(OffsetDateTime.now())){
+        if (verificationToken.getExpiryDate().isBefore(OffsetDateTime.now())) {
             return ResponseEntity.badRequest().body(Map.of("message", "Token expired"));
         }
 
