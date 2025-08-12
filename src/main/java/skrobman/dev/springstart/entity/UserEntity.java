@@ -1,8 +1,7 @@
 package skrobman.dev.springstart.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -10,6 +9,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "users")
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserEntity extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -41,13 +42,8 @@ public class UserEntity extends AuditableEntity {
     )
     private Set<RoleEntity> roles = new HashSet<>();
 
-    public UserEntity() {
-    }
-
-    public UserEntity(String email, String password, boolean enabled) {
-        this.email = email;
-        this.password = password;
-        this.enabled = enabled;
-    }
+    @Getter
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private ProfileEntity profile;
 
 }
