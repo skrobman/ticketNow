@@ -45,8 +45,7 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/", true)
                         .permitAll()
                 )
-                .logout(LogoutConfigurer::permitAll
-                )
+                .logout(LogoutConfigurer::permitAll)
                 //.csrf(csrf -> csrf.disable())
                 .userDetailsService(customUserDetailsService);
         return http.build();
