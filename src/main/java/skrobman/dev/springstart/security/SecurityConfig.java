@@ -41,29 +41,29 @@ public class SecurityConfig {
                                 "/user/verify",
                                 "/user/register/resend-token"
                                 //,
-                                //"/login",
-                                //"/logout",
-                                //"/auth/refresh"
+//                                "/login",
+//                                "/logout",
+//                                "/auth/refresh",
+//                                "/loginPage"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/login")
+                        .loginPage("/loginPage")
                         .usernameParameter("email")
                         .defaultSuccessUrl("/home", true)
                         .permitAll()
                 )
                 .oauth2Login(form -> form
-                        .loginPage("/login")
+                        .loginPage("/loginPage")
                         .userInfoEndpoint(endPoint -> endPoint.oidcUserService(oAuth2UserService))
-                        // TODO: change defaultSuccessUrl bcs root is used for debugging!!!!!!!!!!!!!!!!!!!!!!!!!!
                         .defaultSuccessUrl("/", true)
                         .permitAll()
                 )
-                .logout(AbstractHttpConfigurer::disable)
-                .csrf(csrf -> csrf.disable())
-                .userDetailsService(customUserDetailsService)
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                //.logout(AbstractHttpConfigurer::disable)
+                //.csrf(csrf -> csrf.disable())
+                .userDetailsService(customUserDetailsService);
+                //.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

@@ -7,18 +7,17 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import skrobman.dev.springstart.entity.Oauth2UserEntity;
 import skrobman.dev.springstart.entity.UserEntity;
-import skrobman.dev.springstart.exception.EmailAlreadyExist;
-import skrobman.dev.springstart.exception.NoEmailProvidedException;
-import skrobman.dev.springstart.exception.NoNameProvidedException;
-import skrobman.dev.springstart.exception.NoRequiredParameterException;
+import skrobman.dev.springstart.exception.*;
 import skrobman.dev.springstart.repository.Oauth2UserRepository;
 import skrobman.dev.springstart.repository.UserRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.annotation.Documented;
 import java.util.Map;
 
 /**
@@ -72,12 +71,15 @@ public class Oauth2RegistrationService extends OidcUserService {
     }
 
     private Oauth2UserEntity registerUser(OAuth2User oAuth2User, OAuth2UserRequest request) throws NoRequiredParameterException {
-        Oauth2UserEntity user = new Oauth2UserEntity();
         logger.error(request.getAccessToken().getTokenValue());
         Map<String, Object> attributes = oAuth2User.getAttributes();
 
         Object email = attributes.get("email");
         Object name = attributes.get("name");
+
+        Object provider = attributes.get("iss");
+        Object provider_id = attributes.get("sub");
+
 
         if (email == null) {
             throw new NoEmailProvidedException("Email was not provided by the provider.\nTry again with a different provider or contact support.");
@@ -85,7 +87,24 @@ public class Oauth2RegistrationService extends OidcUserService {
         if (name == null) {
             throw new NoNameProvidedException("No name was provided by the provider.\nTry again with a different provider or contact support.");
         }
+        if (provider == null || provider_id == null) {
+            throw new InvalidProviderException("Provider or Provider ID was not provided by the provider.\nTry again with a different provider or contact support.");
+        }
+
+        Oauth2UserEntity user = new Oauth2UserEntity(provider.toString(), provider_id.toString());
+
         user.setEmail(email.toString());
+
+        UserEntity defaultUser = new UserEntity();
+
+        defaultUser.setEmail(email.toString());
+        defaultUser.setEnabled(true);
+
+        try {
+            defaultUser = userRepository.save(defaultUser);
+        } catch (Exception e) {
+            Assert.notNull(defaultUser, "Something went wrong while saving default user.");
+        }
 
         return oauth2UserRepository.save(user);
     }
