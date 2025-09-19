@@ -29,7 +29,7 @@ create table tickets(
                         updated_at  timestamp with time zone default now()
 );
 
-create table tables_stadiums(
+create table tickets_stadiums(
                                 stadium_id uuid not null references stadiums(id),
                                 tickets_id uuid not null references tickets(id),
                                 created_at  timestamp with time zone default now(),
